@@ -1,0 +1,9 @@
+{
+    "permissions":{
+        "allow":[
+            "Bash(python -m pytest -q)",
+            "Bash(python -m uvicorn app.main:app --port 8123 --log-level warning)",
+            "Bash(python -c ' *)"
+        ]
+    }
+}

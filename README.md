@@ -83,3 +83,33 @@ app/
 
 The HTTP layer talks to storage only through `TaskStore`, so replacing the
 in-memory list with a database means reimplementing that one class.
+
+## Testing
+
+```bash
+pip install -r requirements-dev.txt
+pytest                                      # run the suite
+pytest --cov=app --cov-report=term-missing  # with coverage
+pytest tests/test_create_task.py -v         # one module, verbose
+```
+
+The suite lives in `tests/`, one module per endpoint plus unit tests for the
+store and schemas:
+
+| File                   | Covers                                       |
+| ---------------------- | -------------------------------------------- |
+| `conftest.py`          | Fixtures: isolated store, client, seed data   |
+| `test_health.py`       | `GET /health`                                 |
+| `test_list_tasks.py`   | `GET /tasks`                                  |
+| `test_get_task.py`     | `GET /tasks/{id}`                             |
+| `test_create_task.py`  | `POST /tasks`                                 |
+| `test_replace_task.py` | `PUT /tasks/{id}`                             |
+| `test_delete_task.py`  | `DELETE /tasks/{id}`                          |
+| `test_workflows.py`    | Multi-endpoint flows, fixture isolation       |
+| `test_storage.py`      | `TaskStore` directly, including thread safety |
+| `test_schemas.py`      | Pydantic validation rules                     |
+| `test_openapi.py`      | The published OpenAPI contract                |
+| `test_dependencies.py` | The real (non-overridden) store provider      |
+
+Each test gets a fresh `TaskStore` injected via `app.dependency_overrides`,
+so results never depend on execution order.
